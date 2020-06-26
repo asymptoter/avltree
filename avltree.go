@@ -1,9 +1,13 @@
 package avltree
 
+type AVLTree interface {
+	Less(a, b interface{}) bool
+}
+
 type Node struct {
 	Left   *Node
 	Right  *Node
-	Value  int
+	Value  interface{}
 	Height int
 }
 
@@ -57,42 +61,46 @@ func RightRotate(a *Node) *Node {
 	return b
 }
 
-func balance(root *Node) *Node {
-	diffH := diffHeight(root)
+func (r *Node) balance() *Node {
+	diffH := r.diffHeight()
 	if diffH > 1 {
-		if diffHeight(root.Left) < 0 {
-			root.Left = LeftRotate(root.Left)
+		if r.Left.diffHeight() < 0 {
+			r.Left = LeftRotate(r.Left)
 		}
-		root = RightRotate(root)
+		r = RightRotate(r)
 	} else if diffH < -1 {
-		if diffHeight(root.Right) > 0 {
-			root.Right = RightRotate(root.Right)
+		if r.Right.diffHeight() > 0 {
+			r.Right = RightRotate(r.Right)
 		}
-		root = LeftRotate(root)
+		r = LeftRotate(r)
 	}
-	return root
+	return r
 }
 
-func Insert(root *Node, value int) *Node {
-	if root == nil {
+func Less(a, b interface{}) bool {
+	return a.(int) < b.(int)
+}
+
+func (r *Node) Insert(value int) *Node {
+	if r == nil {
 		return &Node{
 			Value:  value,
 			Height: 1,
 		}
 	}
 
-	root.Height++
-	if value < root.Value {
-		root.Left = Insert(root.Left, value)
+	r.Height++
+	if Less(value, r.Value) {
+		r.Left = r.Left.Insert(value)
 	} else {
-		root.Right = Insert(root.Right, value)
+		r.Right = r.Right.Insert(value)
 	}
 
-	return balance(root)
+	return r.balance()
 }
 
-func Delete(root *Node, value int) *Node {
-	cur := root
+func (r *Node) Delete(value int) *Node {
+	cur := r
 	for {
 		if cur.Value == value {
 		}
@@ -101,17 +109,17 @@ func Delete(root *Node, value int) *Node {
 	return nil
 }
 
-func diffHeight(root *Node) int {
-	if root == nil {
+func (r *Node) diffHeight() int {
+	if r == nil {
 		return 0
 	}
 
 	leftHeight, rightHeight := 0, 0
-	if root.Left != nil {
-		leftHeight = root.Left.Height
+	if r.Left != nil {
+		leftHeight = r.Left.Height
 	}
-	if root.Right != nil {
-		rightHeight = root.Right.Height
+	if r.Right != nil {
+		rightHeight = r.Right.Height
 	}
 
 	return leftHeight - rightHeight

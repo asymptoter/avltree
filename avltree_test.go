@@ -8,7 +8,7 @@ func inorder(root *Node) []int {
 	res := []int{}
 	if root != nil {
 		res = append(res, inorder(root.Left)...)
-		res = append(res, root.Value)
+		res = append(res, root.Value.(int))
 		res = append(res, inorder(root.Right)...)
 	}
 	return res
@@ -17,7 +17,7 @@ func inorder(root *Node) []int {
 func preorder(root *Node) []int {
 	res := []int{}
 	if root != nil {
-		res = append(res, root.Value)
+		res = append(res, root.Value.(int))
 		res = append(res, preorder(root.Left)...)
 		res = append(res, preorder(root.Right)...)
 	}
@@ -43,7 +43,7 @@ func TestAVLTree(t *testing.T) {
 	}
 	list := []int{1, 2, 4, 5, 6, 7, 8, 9}
 	for i := 0; i < len(list); i++ {
-		root = Insert(root, list[i])
+		root = root.Insert(list[i])
 	}
 	in := inorder(root)
 	expIn := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
